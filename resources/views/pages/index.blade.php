@@ -3,13 +3,10 @@
     <div class="container">
         <div class="row justify-content-center mt-5">
             <div class="col-md-8">
-                <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addModal">
-                   <i class="fa fa-plus"></i> pegawai
+                <h3 class="text-center text-muted">SIMPLE CRUD</h3>
+                <button type="button" class="btn btn-dark mb-3" data-bs-toggle="modal" data-bs-target="#addModal">
+                   <i class="fa fa-plus"></i> Tambah
                   </button>
-                  
-                <div class="card">
-                    <div class="card-body">
-                        
                         <div class="table-responsive">
                             <table class="table">
                                 <thead>
@@ -21,19 +18,7 @@
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
-                              {{-- <tbody>
-                                <tr>
-                                    <td id="display_no"></td>
-                                    <td id="display_name"></td>
-                                    <td id="display_jabatan"></td>
-                                    <td id="display_kontrak"></td>
-                                    <td id="display_aksi"></td>
-                                    <td>
-                                        <a href="#" class="edit" id="display_aksi"><i class="fa fa-edit text-dark"></i></a>
-                                        <a href="#" class="delete" onclick="del()"><i class="fa fa-trash text-danger"></i></a>
-                                    </td>
-                                </tr>
-                              </tbody> --}}
+                             
                                 <tbody>
                                     @foreach ($dataPegawai as $i => $dp)
                                     <tr>
@@ -50,10 +35,14 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="mt-3 mx-4" style="float: right">
+                            <img src={{asset('favicon.png')}} class="rounded-circle mb-3" style="width: 30px;float: left;" alt="Avatar" />
+                            <p class="mb-0 my-1 mx-2" style="float: left"><span class="text-muted mx-1">copyright | </span><strong>Luull</strong></p>
+                
+                          </div>
                     </div>
                 </div>
-            </div>
-        </div>
+ 
     </div>
     <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -178,29 +167,6 @@
 @endsection
 @section('script')
 <script>
-//   $(document).ready(function() {
-//         $.ajax({
-//             type:'GET',
-//             method:'GET',
-//             url:"http://127.0.0.1:8001/api/pegawai",
-//             data: '_token = <?php echo csrf_token(); ?>',
-//             success:function(data){
-//                 if (data.data.length > 0) {
-//                    var a = 1
-//                     for(var i = 0; i < data.data.length; i++){
-
-//                         $('#display_no').append("<tr><td>" + a++ + "</td></tr>");
-//                         $('#display_name').append("<tr><td>" + data.data[i].nama + "</td></tr>");
-//                         $('#display_jabatan').append("<tr><td>" + data.data[i].jabatan.jabatan + "</td></tr>");
-//                         $('#display_kontrak').append("<tr><td>" + data.data[i].kontrak.kontrak + "</td></tr>");
-//                         $('#display_aksi').attr("onclick",edit(data.data[i].id))
-//                     }
-//                 }
-//             }
-//         })
-//     });
- 
-    
     $("#add").click(function(e){
         e.preventDefault();
 
@@ -224,6 +190,9 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             location.reload();
+                            $("#nama").val("");
+                            $("#jab").val("");
+                            $("#kon").val("");
                             $('#addModal').modal('toggle');
                         }
                     })
