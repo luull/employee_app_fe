@@ -27,6 +27,11 @@
                                     <td id="display_name"></td>
                                     <td id="display_jabatan"></td>
                                     <td id="display_kontrak"></td>
+                                    <td id="display_aksi"></td>
+                                    <td>
+                                        <a href="#" class="edit" id="display_aksi"><i class="fa fa-edit text-dark"></i></a>
+                                        <a href="#" class="delete" onclick="del()"><i class="fa fa-trash text-danger"></i></a>
+                                    </td>
                                 </tr>
                               </tbody> --}}
                                 <tbody>
@@ -71,7 +76,7 @@
                         <div class="form-group">
                             <label class="my-2">Jabatan</label>
                             <select name="jab_id" class="form-control " id="jab">
-                                <option selected>Pilih Jabatan</option>
+                                <option>Pilih Jabatan</option>
                                 @foreach($dataJabatan as $dj)
                                 <option value="{{$dj['id']}}">{{$dj['jabatan']}}</option>
                                 @endforeach
@@ -82,7 +87,7 @@
                         <div class="form-group">
                             <label class="my-2">Kontrak</label>
                             <select name="kon_id" class="form-control" id="kon">
-                                <option selected>Pilih Kontrak</option>
+                                <option>Pilih Kontrak</option>
                             @foreach($dataKontrak as $dj)
                                 <option value="{{$dj['id']}}">{{$dj['kontrak']}}</option>
                             @endforeach
@@ -122,7 +127,7 @@
                         <div class="form-group">
                             <label class="my-2">Jabatan</label>
                             <select name="jab_id" class="form-control" id="edit_jab_id">
-                                <option selected value="default">Pilih Jabatan</option>
+                                <option>Pilih Jabatan</option>
                                 @foreach($dataJabatan as $dj)
                                 <option value="{{$dj['id']}}">{{$dj['jabatan']}}</option>
                                 @endforeach
@@ -133,7 +138,7 @@
                         <div class="form-group">
                             <label class="my-2">Kontrak</label>
                             <select name="kon_id" class="form-control" id="edit_kon_id">
-                                <option selected value="default">Pilih Kontrak</option>
+                                <option>Pilih Kontrak</option>
                             @foreach($dataKontrak as $dj)
                                 <option value="{{$dj['id']}}">{{$dj['kontrak']}}</option>
                             @endforeach
@@ -173,26 +178,29 @@
 @endsection
 @section('script')
 <script>
-  $(document).ready(function() {
-        $.ajax({
-            type:'GET',
-            method:'GET',
-            url:"http://127.0.0.1:8001/api/pegawai",
-            data: '_token = <?php echo csrf_token(); ?>',
-            success:function(data){
-                if (data.data.length > 0) {
-                   var a = 1
-                    for(var i = 0; i < data.data.length; i++){
+//   $(document).ready(function() {
+//         $.ajax({
+//             type:'GET',
+//             method:'GET',
+//             url:"http://127.0.0.1:8001/api/pegawai",
+//             data: '_token = <?php echo csrf_token(); ?>',
+//             success:function(data){
+//                 if (data.data.length > 0) {
+//                    var a = 1
+//                     for(var i = 0; i < data.data.length; i++){
 
-                        $('#display_no').append("<tr><td>" + a++ + "</td></tr>");
-                        $('#display_name').append("<tr><td>" + data.data[i].nama + "</td></tr>");
-                        $('#display_jabatan').append("<tr><td>" + data.data[i].jabatan.jabatan + "</td></tr>");
-                        $('#display_kontrak').append("<tr><td>" + data.data[i].kontrak.kontrak + "</td></tr>");
-                    }
-                }
-            }
-        })
-    });
+//                         $('#display_no').append("<tr><td>" + a++ + "</td></tr>");
+//                         $('#display_name').append("<tr><td>" + data.data[i].nama + "</td></tr>");
+//                         $('#display_jabatan').append("<tr><td>" + data.data[i].jabatan.jabatan + "</td></tr>");
+//                         $('#display_kontrak').append("<tr><td>" + data.data[i].kontrak.kontrak + "</td></tr>");
+//                         $('#display_aksi').attr("onclick",edit(data.data[i].id))
+//                     }
+//                 }
+//             }
+//         })
+//     });
+ 
+    
     $("#add").click(function(e){
         e.preventDefault();
 
@@ -206,8 +214,30 @@
             url:"http://127.0.0.1:8001/api/pegawai/add",
             data: {nama:names, jab_id:jab, kon_id:kon,_token:token},
             success:function(data){
-                console.log(data.data)
-                $('#addModal').modal('toggle');
+                if(data.message == 'success'){
+
+                    console.log(data.data)
+                    Swal.fire({
+                        title: data.message,
+                        text: 'Data Berhasil di tambah',
+                        icon: data.message,
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                            $('#addModal').modal('toggle');
+                        }
+                    })
+                 
+                }else{
+                    console.log(data.data)
+                        $.each( data.data, function( key, value ) {
+                            Swal.fire({
+                            icon: data.message,
+                            title: value[0],
+                        })
+                    });
+                
+                }
             }
         })
     })
@@ -244,7 +274,16 @@
             data: {nama:names, jab_id:jab, kon_id:kon,_token:token},
             success:function(data){
                 console.log(data.data)
-                $('#editModal').modal('toggle');
+                Swal.fire({
+                    title: data.message,
+                    text: 'Data Berhasil di ubah',
+                    icon: data.message,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.reload();
+                        $('#editModal').modal('toggle');
+                    }
+                })
             }
         })
     })
@@ -273,7 +312,17 @@
             data: '_token = <?php echo csrf_token(); ?>',
             success:function(data){
                 console.log(data.data)
-                $('#deleteModal').modal('toggle');
+                Swal.fire({
+                    title: data.message,
+                    text: 'Data Berhasil di hapus',
+                    icon: data.message,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.reload();
+                        $('#deleteModal').modal('toggle');
+                    }
+                })
+      
             }
         })
     })
